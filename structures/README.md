@@ -10,17 +10,23 @@ structures/
 ├── Makefile
 ├── README.md
 ├── list/
+│   ├── Makefile
+│   ├── README.md
+│   ├── list.h
+│   ├── list.c
+│   └── test_list.c
+├── ordered_list/
+│   ├── Makefile
+│   ├── README.md
+│   ├── ordered_list.h
+│   ├── ordered_list.c
+│   └── test_ordered_list.c
+└── stack/
     ├── Makefile
     ├── README.md
-    ├── list.h
-    ├── list.c
-    └── test_list.c
-└── ordered_list/
-    ├── Makefile
-    ├── README.md
-    ├── ordered_list.h
-    ├── ordered_list.c
-    └── test_ordered_list.c
+    ├── stack.h
+    ├── stack.c
+    └── test_stack.c
 ```
 
 ## Run every structure's tests
@@ -46,8 +52,9 @@ make test
 make sanitize
 ```
 
-See [`list/README.md`](list/README.md) and
-[`ordered_list/README.md`](ordered_list/README.md) for module-specific testing
+See [`list/README.md`](list/README.md),
+[`ordered_list/README.md`](ordered_list/README.md), and
+[`stack/README.md`](stack/README.md) for module-specific API and testing
 instructions.
 
 ## Add another structure
