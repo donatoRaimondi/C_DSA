@@ -1,4 +1,4 @@
-STRUCTURES := list ordered_list stack
+STRUCTURES := list ordered_list stack queue
 
 .PHONY: all test sanitize clean $(STRUCTURES)
 
