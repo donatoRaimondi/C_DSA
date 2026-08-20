@@ -27,12 +27,18 @@ structures/
     ├── stack.h
     ├── stack.c
 │   └── test_stack.c
-└── queue/
+├── queue/
     ├── Makefile
     ├── README.md
     ├── queue.h
     ├── queue.c
-    └── test_queue.c
+│   └── test_queue.c
+└── set/
+    ├── Makefile
+    ├── README.md
+    ├── set.h
+    ├── set.c
+    └── test_set.c
 ```
 
 ## Run every structure's tests
@@ -59,9 +65,10 @@ make sanitize
 ```
 
 See [`list/README.md`](list/README.md),
-[`ordered_list/README.md`](ordered_list/README.md), and
-[`stack/README.md`](stack/README.md), and [`queue/README.md`](queue/README.md)
-for module-specific API and testing instructions.
+[`ordered_list/README.md`](ordered_list/README.md),
+[`stack/README.md`](stack/README.md), [`queue/README.md`](queue/README.md), and
+[`set/README.md`](set/README.md) for module-specific API and testing
+instructions.
 
 ## Add another structure
 
