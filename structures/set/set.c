@@ -4,7 +4,7 @@
 #include <stdlib.h>
 
 set set_init(size_t capacity, set_hash_fn hash, set_equal_fn equal) {
-  if (capacity == 0)
+  if (capacity <= 0)
     errx(EXIT_FAILURE, "set_init: capacity must be > 0");
   if (hash == NULL || equal == NULL)
     errx(EXIT_FAILURE, "set_init: hash and equal must be non-NULL");
