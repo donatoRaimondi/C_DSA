@@ -28,19 +28,26 @@ typedef struct {
   dictionary_equal_fn equal;
 } dictionary;
 
+/* Create an empty fixed-capacity dictionary. Arguments must be valid. */
 dictionary dictionary_init(size_t capacity, dictionary_hash_fn hash,
                            dictionary_equal_fn equal);
 
+/* Free the slot array and reset all fields; keys and values are not freed. */
 void dictionary_clear(dictionary *d);
 
+/* Return whether the dictionary contains no key/value pairs. O(1). */
 bool isEmpty_dictionary(const dictionary *d);
 
+/* Test whether an equivalent key exists. Average O(1), worst O(capacity). */
 bool dictionary_contains(const dictionary *d, elem key);
 
+/* Insert a pair or replace the value for an equivalent key. */
 void dictionary_insert(dictionary *d, elem key, elem value);
 
+/* Remove an equivalent key if present; missing keys have no effect. */
 void dictionary_remove(dictionary *d, elem key);
 
+/* Return the value for key; terminates when the key is absent. */
 elem dictionary_get(const dictionary *d, elem key);
 
 #endif // ! DICTIONARY_H

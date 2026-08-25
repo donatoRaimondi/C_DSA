@@ -17,7 +17,7 @@ dictionary dictionary_init(size_t capacity, dictionary_hash_fn hash,
                   .hash = hash,
                   .equal = equal};
   if (d.slots == NULL)
-    err(EXIT_FAILURE, "dictionary_init: allocation failued");
+    err(EXIT_FAILURE, "dictionary_init: allocation failed");
 
   return d;
 }

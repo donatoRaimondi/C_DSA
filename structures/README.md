@@ -22,23 +22,29 @@ structures/
 │   ├── ordered_list.c
 │   └── test_ordered_list.c
 ├── stack/
-    ├── Makefile
-    ├── README.md
-    ├── stack.h
-    ├── stack.c
+│   ├── Makefile
+│   ├── README.md
+│   ├── stack.h
+│   ├── stack.c
 │   └── test_stack.c
 ├── queue/
-    ├── Makefile
-    ├── README.md
-    ├── queue.h
-    ├── queue.c
+│   ├── Makefile
+│   ├── README.md
+│   ├── queue.h
+│   ├── queue.c
 │   └── test_queue.c
-└── set/
+├── set/
+│   ├── Makefile
+│   ├── README.md
+│   ├── set.h
+│   ├── set.c
+│   └── test_set.c
+└── dictionary/
     ├── Makefile
     ├── README.md
-    ├── set.h
-    ├── set.c
-    └── test_set.c
+    ├── dictionary.h
+    ├── dictionary.c
+    └── test_dictionary.c
 ```
 
 ## Run every structure's tests
@@ -66,9 +72,10 @@ make sanitize
 
 See [`list/README.md`](list/README.md),
 [`ordered_list/README.md`](ordered_list/README.md),
-[`stack/README.md`](stack/README.md), [`queue/README.md`](queue/README.md), and
-[`set/README.md`](set/README.md) for module-specific API and testing
-instructions.
+[`stack/README.md`](stack/README.md), [`queue/README.md`](queue/README.md),
+[`set/README.md`](set/README.md), and
+[`dictionary/README.md`](dictionary/README.md) for module-specific API and
+testing instructions.
 
 ## Add another structure
 
