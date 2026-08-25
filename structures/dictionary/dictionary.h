@@ -47,7 +47,11 @@ void dictionary_insert(dictionary *d, elem key, elem value);
 /* Remove an equivalent key if present; missing keys have no effect. */
 void dictionary_remove(dictionary *d, elem key);
 
-/* Return the value for key; terminates when the key is absent. */
-elem dictionary_get(const dictionary *d, elem key);
+/*
+ * Look up key. Return true when found and, if out_value is non-NULL, store its
+ * value there. Return false for a missing/uninitialized dictionary and set a
+ * provided output to NULL. A true result can still contain a NULL value.
+ */
+bool dictionary_get(const dictionary *d, elem key, elem *out_value);
 
 #endif // ! DICTIONARY_H

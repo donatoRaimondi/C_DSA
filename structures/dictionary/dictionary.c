@@ -125,22 +125,25 @@ void dictionary_remove(dictionary *d, elem key) {
   }
 }
 
-elem dictionary_get(const dictionary *d, elem key) {
-  if (d->capacity == 0)
-    errx(EXIT_FAILURE, "dictionary_get: capacity must be > 0");
+bool dictionary_get(const dictionary *d, elem key, elem *out_value) {
+  if (out_value != NULL)
+    *out_value = NULL;
 
-  if (isEmpty_dictionary(d))
-    errx(EXIT_FAILURE, "dictionary_get: dictionary is empty");
+  if (d->capacity == 0 || isEmpty_dictionary(d))
+    return false;
 
   for (size_t i = 0; i < d->capacity; i++) {
     size_t h = probe_index(d, key, i);
 
     if (d->slots[h].state == SLOT_EMPTY)
-      errx(EXIT_FAILURE, "dictionary_get: key not present");
+      return false;
 
-    if (d->slots[h].state == SLOT_OCCUPIED && d->equal(d->slots[h].key, key))
-      return d->slots[h].value;
+    if (d->slots[h].state == SLOT_OCCUPIED && d->equal(d->slots[h].key, key)) {
+      if (out_value != NULL)
+        *out_value = d->slots[h].value;
+      return true;
+    }
   }
 
-  errx(EXIT_FAILURE, "dictionary_get: key not present");
+  return false;
 }

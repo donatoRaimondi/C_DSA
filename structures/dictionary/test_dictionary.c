@@ -57,6 +57,12 @@ static bool equal_int(const elem left, const elem right) {
   return *(const int *)left == *(const int *)right;
 }
 
+static elem get_existing(const dictionary *d, elem key) {
+  elem value = NULL;
+  CHECK(dictionary_get(d, key, &value));
+  return value;
+}
+
 static void test_initialization(void) {
   dictionary d = dictionary_init(8, hash_int, equal_int);
 
@@ -90,10 +96,10 @@ static void test_insert_contains_and_get(void) {
   CHECK(!isEmpty_dictionary(&d));
   for (size_t i = 0; i < 3; ++i) {
     CHECK(dictionary_contains(&d, &keys[i]));
-    CHECK(dictionary_get(&d, &keys[i]) == &values[i]);
+    CHECK(get_existing(&d, &keys[i]) == &values[i]);
   }
   CHECK(dictionary_contains(&d, &equivalent_key));
-  CHECK(dictionary_get(&d, &equivalent_key) == &values[0]);
+  CHECK(get_existing(&d, &equivalent_key) == &values[0]);
   CHECK(!dictionary_contains(&d, &missing));
 
   dictionary_clear(&d);
@@ -109,8 +115,8 @@ static void test_insert_updates_existing_key(void) {
   dictionary_insert(&d, &original_key, &original_value);
   dictionary_insert(&d, &equivalent_key, &replacement_value);
   CHECK(d.size == 1);
-  CHECK(dictionary_get(&d, &original_key) == &replacement_value);
-  CHECK(dictionary_get(&d, &equivalent_key) == &replacement_value);
+  CHECK(get_existing(&d, &original_key) == &replacement_value);
+  CHECK(get_existing(&d, &equivalent_key) == &replacement_value);
 
   dictionary_clear(&d);
 }
@@ -125,7 +131,7 @@ static void test_collisions_and_full_capacity(void) {
   CHECK(d.size == 8);
   for (size_t i = 0; i < 8; ++i) {
     CHECK(dictionary_contains(&d, &keys[i]));
-    CHECK(dictionary_get(&d, &keys[i]) == &values[i]);
+    CHECK(get_existing(&d, &keys[i]) == &values[i]);
   }
 
   dictionary_clear(&d);
@@ -144,14 +150,14 @@ static void test_remove_and_tombstone_reuse(void) {
   dictionary_remove(&d, &keys[1]);
   CHECK(d.size == 2);
   CHECK(!dictionary_contains(&d, &keys[1]));
-  CHECK(dictionary_get(&d, &keys[0]) == &values[0]);
-  CHECK(dictionary_get(&d, &keys[2]) == &values[2]);
+  CHECK(get_existing(&d, &keys[0]) == &values[0]);
+  CHECK(get_existing(&d, &keys[2]) == &values[2]);
 
   dictionary_remove(&d, &missing);
   CHECK(d.size == 2);
   dictionary_insert(&d, &replacement_key, &replacement_value);
   CHECK(d.size == 3);
-  CHECK(dictionary_get(&d, &replacement_key) == &replacement_value);
+  CHECK(get_existing(&d, &replacement_key) == &replacement_value);
 
   dictionary_clear(&d);
 }
@@ -169,7 +175,7 @@ static void test_remove_all_and_reuse(void) {
   CHECK(d.size == 0);
 
   dictionary_insert(&d, &keys[2], &values[2]);
-  CHECK(dictionary_get(&d, &keys[2]) == &values[2]);
+  CHECK(get_existing(&d, &keys[2]) == &values[2]);
   CHECK(d.size == 1);
   dictionary_clear(&d);
 }
@@ -180,7 +186,9 @@ static void test_null_value(void) {
 
   dictionary_insert(&d, &key, NULL);
   CHECK(dictionary_contains(&d, &key));
-  CHECK(dictionary_get(&d, &key) == NULL);
+  elem result = &key;
+  CHECK(dictionary_get(&d, &key, &result));
+  CHECK(result == NULL);
   CHECK(d.size == 1);
 
   dictionary_clear(&d);
@@ -225,19 +233,25 @@ static void dies_insert_full(void) {
   dictionary_insert(&d, &keys[1], &values[1]);
 }
 
-static void dies_get_empty(void) {
+static void test_get_missing(void) {
   int key = 1;
+  int stored_key = 2;
+  int stored_value = 20;
+  elem output = &key;
   dictionary d = dictionary_init(2, hash_int, equal_int);
-  (void)dictionary_get(&d, &key);
-}
 
-static void dies_get_missing(void) {
-  int key = 1;
-  int missing = 2;
-  int value = 10;
-  dictionary d = dictionary_init(2, hash_int, equal_int);
-  dictionary_insert(&d, &key, &value);
-  (void)dictionary_get(&d, &missing);
+  CHECK(!dictionary_get(&d, &key, &output));
+  CHECK(output == NULL);
+  dictionary_insert(&d, &stored_key, &stored_value);
+  output = &key;
+  CHECK(!dictionary_get(&d, &key, &output));
+  CHECK(output == NULL);
+  CHECK(dictionary_get(&d, &stored_key, NULL));
+  dictionary_clear(&d);
+
+  output = &key;
+  CHECK(!dictionary_get(&d, &key, &output));
+  CHECK(output == NULL);
 }
 
 static void dies_contains_after_clear(void) {
@@ -262,8 +276,6 @@ static void test_invalid_operations(void) {
                            "dictionary without equality");
   check_exits_with_failure(dies_insert_full,
                            "insertion into full dictionary");
-  check_exits_with_failure(dies_get_empty, "get from empty dictionary");
-  check_exits_with_failure(dies_get_missing, "get missing key");
   check_exits_with_failure(dies_contains_after_clear, "contains after clear");
   check_exits_with_failure(dies_remove_after_clear, "remove after clear");
 }
@@ -277,6 +289,7 @@ int main(void) {
   test_remove_all_and_reuse();
   test_null_value();
   test_clear_and_ownership();
+  test_get_missing();
   test_invalid_operations();
 
   if (tests_failed != 0) {

@@ -23,10 +23,12 @@ int main(void) {
   dictionary d = dictionary_init(8, hash_int, equal_int);
 
   dictionary_insert(&d, &key, &value);
-  int *found = dictionary_get(&d, &equivalent_key);
+  elem result = NULL;
+  bool found = dictionary_get(&d, &equivalent_key, &result);
+  int *value_found = result;
 
   dictionary_clear(&d);
-  return found == &value ? 0 : 1;
+  return found && value_found == &value ? 0 : 1;
 }
 ```
 
@@ -42,13 +44,61 @@ int main(void) {
   The originally stored key pointer remains in the slot.
 - Removing a missing key has no effect. Removed slots become tombstones, which
   preserve probing chains and can be reused by later insertions.
-- `NULL` is a valid value. Use `dictionary_contains()` to distinguish a stored
-  `NULL` value from an absent key before calling `dictionary_get()`.
+- `dictionary_get()` returns `false` for a missing key instead of terminating
+  the process. If an output pointer is supplied, it is set to `NULL` when the
+  lookup fails.
+- `NULL` is a valid stored value. A successful lookup can therefore return
+  `true` while writing `NULL` to the output parameter.
 - Keys may be `NULL` only if both callbacks explicitly support `NULL`.
 - Inserting a new key into a full table terminates the process with `errx()`.
-- Getting a missing key or getting from an empty dictionary also terminates.
 - `dictionary_clear()` frees the slot array and resets the callbacks and
   capacity. Assign a new result from `dictionary_init()` before reuse.
+
+## Safe lookup with an output parameter
+
+The lookup API separates two different pieces of information:
+
+```c
+bool dictionary_get(const dictionary *d, elem key, elem *out_value);
+```
+
+- The `bool` return value answers: “Was the key found?”
+- `*out_value` contains the stored value when the key was found.
+
+This is preferable to returning `NULL` for a missing key because `NULL` is also
+a valid dictionary value. A sentinel-only API could not distinguish these two
+cases:
+
+| Return value | Output value | Meaning |
+|---|---|---|
+| `true` | non-`NULL` | Key exists and stores that pointer |
+| `true` | `NULL` | Key exists and intentionally stores `NULL` |
+| `false` | `NULL` | Key does not exist, dictionary is empty, or was cleared |
+
+Typical usage:
+
+```c
+elem raw_value = NULL;
+
+if (dictionary_get(&d, &key, &raw_value)) {
+  int *number = raw_value;
+  /* Use number. It may still be NULL if NULL values are allowed here. */
+} else {
+  /* Handle the missing key without terminating the program. */
+}
+```
+
+The output parameter is optional. Pass `NULL` when only existence matters:
+
+```c
+if (dictionary_get(&d, &key, NULL)) {
+  /* The key exists. */
+}
+```
+
+On failure, the implementation initializes a supplied output parameter to
+`NULL`. This prevents callers from accidentally using an old pointer left over
+from an earlier successful lookup.
 
 ## Function reference
 
@@ -60,7 +110,7 @@ int main(void) {
 | `dictionary_contains()` | Tests whether a key exists | O(1) / O(capacity) |
 | `dictionary_insert()` | Inserts a pair or updates an equivalent key | O(1) / O(capacity) |
 | `dictionary_remove()` | Removes a key if present | O(1) / O(capacity) |
-| `dictionary_get()` | Returns the value for an existing key | O(1) / O(capacity) |
+| `dictionary_get()` | Reports membership and optionally writes the value | O(1) / O(capacity) |
 
 Performance depends on the load factor and quality of the hash function.
 Because the table is fixed-size, callers should choose a capacity comfortably
@@ -79,7 +129,8 @@ make clean
 The suite covers initialization, insertion, lookup, callback-based equivalent
 keys, value replacement, collisions, complete table utilization, tombstones,
 deletion and reuse, `NULL` values, clear and ownership, invalid callbacks, zero
-capacity, missing keys, full-table insertion, and operations after clear.
+capacity, non-throwing missing-key lookup, optional output parameters,
+full-table insertion, and operations after clear.
 
 Failure tests use `fork()` and `waitpid()`, so the suite targets macOS and Linux
 rather than native Windows.
