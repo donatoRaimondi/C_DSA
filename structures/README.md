@@ -45,12 +45,18 @@ structures/
     ├── dictionary.h
     ├── dictionary.c
 │   └── test_dictionary.c
-└── b_tree/
+├── b_tree/
     ├── Makefile
     ├── README.md
     ├── b_tree.h
     ├── b_tree.c
-    └── test_b_tree.c
+│   └── test_b_tree.c
+└── priority_queue/
+    ├── Makefile
+    ├── README.md
+    ├── priority_queue.h
+    ├── priority_queue.c
+    └── test_priority_queue.c
 ```
 
 ## Run every structure's tests
@@ -81,8 +87,9 @@ See [`list/README.md`](list/README.md),
 [`stack/README.md`](stack/README.md), [`queue/README.md`](queue/README.md),
 [`set/README.md`](set/README.md), and
 [`dictionary/README.md`](dictionary/README.md), and
-[`b_tree/README.md`](b_tree/README.md) for module-specific API and testing
-instructions.
+[`b_tree/README.md`](b_tree/README.md), and
+[`priority_queue/README.md`](priority_queue/README.md) for module-specific API
+and testing instructions.
 
 ## Add another structure
 
