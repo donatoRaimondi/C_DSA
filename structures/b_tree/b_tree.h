@@ -44,4 +44,9 @@ void b_tree_ins_dx(b_tree *bt, b_pos father, elem value);
 elem b_tree_node_read(b_pos node);
 void b_tree_node_write(b_pos node, elem value);
 
+list *b_tree_dfs(const b_tree *bt);
+
+list *b_tree_bfs(const b_tree *bt);
+
+bool b_tree_search(const b_tree *bt, elem value);
 #endif
