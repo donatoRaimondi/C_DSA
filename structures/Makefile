@@ -1,4 +1,4 @@
-STRUCTURES := list ordered_list stack queue set dictionary b_tree priority_queue
+STRUCTURES := list ordered_list stack queue set dictionary b_tree priority_queue bst
 
 .PHONY: all test sanitize clean $(STRUCTURES)
 

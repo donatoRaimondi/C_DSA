@@ -51,12 +51,18 @@ structures/
     ├── b_tree.h
     ├── b_tree.c
 │   └── test_b_tree.c
-└── priority_queue/
+├── priority_queue/
     ├── Makefile
     ├── README.md
     ├── priority_queue.h
     ├── priority_queue.c
-    └── test_priority_queue.c
+│   └── test_priority_queue.c
+└── bst/
+    ├── Makefile
+    ├── README.md
+    ├── bst.h
+    ├── bst.c
+    └── test_bst.c
 ```
 
 ## Run every structure's tests
@@ -88,8 +94,9 @@ See [`list/README.md`](list/README.md),
 [`set/README.md`](set/README.md), and
 [`dictionary/README.md`](dictionary/README.md), and
 [`b_tree/README.md`](b_tree/README.md), and
-[`priority_queue/README.md`](priority_queue/README.md) for module-specific API
-and testing instructions.
+[`priority_queue/README.md`](priority_queue/README.md), and
+[`bst/README.md`](bst/README.md) for module-specific API and testing
+instructions.
 
 ## Add another structure
 
